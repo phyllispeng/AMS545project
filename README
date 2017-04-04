@@ -1,0 +1,24 @@
+Yuanyuan Peng
+108 734 720
+AMS 545 Project
+
+Project
+	(5). Implement and experiment with Timothy Chan’s convex hull algorithm ( O(nlogh) ) in 2D. Ideally, show an animation of the algorithm to help make it clear how it works.
+
+Language
+	Java
+
+Project Plan
+	1) Implement the Chan’s algorithms with the pseudocode in the slide.
+		a. Separate the points into n/m groups, find the convex hull for each group.
+		b. Then find the convex hull of all the convex hull we just found
+	2) Test the program with keyboard/file input
+		a. First test with 𝑚 = 3,4,5,6,… , see if the program can find convex hull of a group of points.
+		b. Test if the program works on finding the convex hull of the m-gons (triangles for 𝑚 = 3)
+	3) Implement the UI
+		a. Test (2) a with the UI first
+		b. Then test (2) b with the implemented UI
+	4) Implement the animation
+		a. Test (2) a with animation
+		b. Then test (2) b with the implemented animation
+	5) Write the project report
