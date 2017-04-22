@@ -12,12 +12,11 @@ package cgproject;
 public class MPoint {
     private double x;
     private double y;
+    private double angle;
     
-/*    public MPoint(){
-    x=0.0;
-    y=0.0;
-    }
-  */  
+ public MPoint(){
+
+    } 
 
     /**
      *
@@ -25,9 +24,10 @@ public class MPoint {
      * @param y
      */
   
-    public MPoint(double x, double y) {
+    public MPoint(double x, double y,double angle) {
         this.x = x;
         this.y = y;
+        this.angle = angle;
     }
     
     /**
@@ -61,8 +61,15 @@ public class MPoint {
     public void setY(double y) {
         this.y = y;
     }
+    
+    public double getA(){
+        return angle;
+    }
+    public void setAngle(double angle){
+        this.angle = angle;
+    }
     public String toString(){
-        return "< "+ x +" , "+ y +" >";
+        return "< "+ x +" , "+ y + " , "+angle+" >" ;
     }
     
 }
