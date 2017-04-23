@@ -9,10 +9,10 @@ package cgproject;
  *
  * @author Phyllis Peng
  */
-public class MPoint {
+public class MPoint  {
     private double x;
     private double y;
-    private double angle;
+   // private double angle;
     
  public MPoint(){
 
@@ -24,10 +24,10 @@ public class MPoint {
      * @param y
      */
   
-    public MPoint(double x, double y,double angle) {
+    public MPoint(double x, double y ) {
         this.x = x;
         this.y = y;
-        this.angle = angle;
+       // this.angle = angle;
     }
     
     /**
@@ -62,14 +62,17 @@ public class MPoint {
         this.y = y;
     }
     
-    public double getA(){
-        return angle;
-    }
-    public void setAngle(double angle){
-        this.angle = angle;
-    }
+//    public double getA(){
+//        return angle;
+//    }
+//    public void setAngle(double angle){
+//        this.angle = angle;
+//    }
+//    
     public String toString(){
-        return "< "+ x +" , "+ y + " , "+angle+" >" ;
+        return "< "+ x +" , "+ y +" >" ;
     }
     
+    
+ 
 }

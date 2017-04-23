@@ -16,10 +16,9 @@ import java.util.*;
  *
  * @author Phyllis Peng
  */
-//C:\Users\Phyllis Peng\Documents\AMS 545\ams545project\CGproject\src\cgproject
+
 
 public class CHAlgo {
-    public MPoint mp;
     
     /**
      *
@@ -29,11 +28,23 @@ public class CHAlgo {
      */
     
     
-    public static double ChanALGO(int n , int m){
-        double p = n/m;
-        double r = Math.ceil(p);
+    public static ArrayList ChanALGO(ArrayList<MPoint> L , int m){
+        int n = L.size();
+        int p =  n/m;
+        int  r = (int) Math.ceil(p);
+        int i = 0;
+       ArrayList  PList =split(L,m);
         
-    return r;
+        
+        ArrayList Polygon = new ArrayList();
+        
+        //compute convex Hall
+        for (int j =0; j<PList.size();j++){
+             
+            Stack st = GS((ArrayList<MPoint>) PList.get(j));
+            Polygon.add(st);
+        }
+    return Polygon;
     }
 
     /**
@@ -138,11 +149,7 @@ public class CHAlgo {
         String csvFilePath = "src/cgproject/";
          
         String fileName =csvFilePath+"points.csv";
-        Scanner fromFile = new Scanner(new BufferedReader(new FileReader(fileName)));
-        /*
-        MPoint p0 = new MPoint(0,0);
-        MP.add(p0);
-        */        
+        Scanner fromFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
         while(fromFile.hasNextLine()){
             String Input =  fromFile.nextLine();
             String[] p = Input.split(",");
@@ -158,29 +165,89 @@ public class CHAlgo {
         return MP;
     }
     public static double MAngle (MPoint p0, MPoint pi ){
-        double MA = Math.atan2(pi.getY(),pi.getX()) - Math.atan2(p0.getY(),p0.getX());
+        double X = pi.getX() - p0.getX();
+        double Y = pi.getY() - p0.getY();
+        
+        double MA = Math.atan2(Y,X);
         return MA;
     }
     /**
      * compare the angle value in the MPoing Object
-     */
-    public static class CompAngle implements Comparator<MPoint>{
+     * public static class CompAngle implements Comparator<MPoint>{
         @Override
          public int compare(MPoint a, MPoint b){
              return (int) (a.getA() - b.getA());
          }       
     }
     
-    public static ArrayList<MPoint> sortAngle(ArrayList<MPoint> SortedList){
-        MPoint temp = SortedList.get(0);
-        SortedList.remove(0);
-        Collections.sort(SortedList, new CHAlgo.CompAngle());
-
-        SortedList.add(0,temp);
-        return SortedList;
+     *  */
+     
+   
+    
+    public static TreeSet<MPoint> sortAngle(ArrayList<MPoint>  L){
+        MPoint low =  L.get(0);
+    TreeSet<MPoint> SortedSet = new TreeSet<MPoint>(new Comparator<MPoint>(){
+            @Override
+            public int compare(MPoint o1, MPoint o2) {
+                if (o1 == o2 || o1.equals(o2)){
+                    
+                    return 0;
+                }
+                double theta1 = MAngle(low,o1);
+                double theta2 = MAngle(low,o2);
+              
+                if (theta1 < theta2){
+                    return -1;
+                }else if (theta1 > theta2){
+                    return 1;
+                }
+                else{
+                    double d1 = PointDistance(low,o1);
+                    double d2 = PointDistance(low,o2);
+                    
+                    if (d1<d2){
+                        
+                        return -1;
+                    }else{
+                        
+                        return 1;
+                        }
+                }
+            }
+            
+        }); 
+        SortedSet.addAll(L);
+        return SortedSet;
     }
     
-    
+    public static Stack <MPoint> GS ( ArrayList<MPoint> L){
+        //intialize the stack
+        
+        Stack st =  new Stack();
+        MPoint sP = L.get(0); //lowest point is the starting point
+        st.push(sP);
+        st.push(L.get(1));
+        // bottom two whill never be removed
+        int i =2;
+        while (i<L.size() ){
+            MPoint temp = (MPoint) st.pop();
+            MPoint p0 = (MPoint) st.peek();
+            st.push(temp);
+            MPoint p1 = (MPoint) st.peek();
+            
+            if (Left(p0,p1,L.get(i))){
+                st.push(L.get(i));
+                i++;
+            }else{
+                st.pop();
+            }
+            
+        }
+        
+        
+        return st;
+        
+    }
     public static void main(String[] args) throws FileNotFoundException {
     
      
@@ -199,17 +266,41 @@ public class CHAlgo {
     for (int j =1 ; j<L.size();j++){
         
         MPoint P0 = L.get(0);
-        P0.setAngle(0);
-        MPoint Pj = L.get(j);
-       // System.out.println(Pj);
-        double A = MAngle(P0,Pj);
-        Pj.setAngle(A);
-       // System.out.println(A);
+     //   P0.setAngle(0);
+        MPoint Pj = L.get(j);        
+      //  Pj.setAngle(MAngle(P0,Pj));
+        
        
        
     }
-    System.out.println("L before sorting\n"+L);
-    ArrayList<MPoint> L1 = sortAngle(L);
-    System.out.println(L1);
+    
+    TreeSet<MPoint> L1 = sortAngle(L);
+   
+    ArrayList<MPoint> CG = new ArrayList();
+    CG.addAll(L1);
+    System.out.println("=============================================");
+    Stack aa = new Stack();
+    aa = GS(CG);
+    System.out.println("stack is"+aa);
+     List b =ChanALGO(CG ,  5);
+     System.out.println(b);
     }
+
+    private static ArrayList<MPoint> split(ArrayList<MPoint> L, int m) {
+        int n = L.size();
+        int p =  n/m;
+        int  r = (int) Math.ceil(p);
+        ArrayList<MPoint> temp = new ArrayList<MPoint>();
+        ArrayList P = new ArrayList<MPoint>();
+        for (int i =0; i< L.size();i+=m){
+            temp.clear();
+            System.out.println("i is "+i+"\n");
+             for (int j = i; j< i+m;j++){
+                 System.out.println("j is "+j+"\n");
+                 temp.add(L.get(j));
+             }
+             P.add(temp);
+        }
+        return P;
+        }
 }
