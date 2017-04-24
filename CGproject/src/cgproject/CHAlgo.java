@@ -22,6 +22,7 @@ public class CHAlgo {
     
     /**
      *
+     * @param L
      * @param n
      * @param m
      * @return
@@ -29,31 +30,27 @@ public class CHAlgo {
     
     
     public static ArrayList ChanALGO(ArrayList<MPoint> L , int m){
-        int n = L.size();
-        int p =  n/m;
-        int  r = (int) Math.ceil(p);
-        int i = 0;
+      
        ArrayList  PList =split(L,m);
-        
-        
+         
         ArrayList Polygon = new ArrayList();
-        
+         Stack st = new Stack();
         //compute convex Hall
         for (int j =0; j<PList.size();j++){
-             
-            Stack st = GS((ArrayList<MPoint>) PList.get(j));
+             ArrayList<MPoint> FindLow =  FindLowest((ArrayList<MPoint>) PList.get(j));
+             TreeSet<MPoint> L1 = sortAngle(FindLow);
+   
+             ArrayList<MPoint> CG = new ArrayList();
+             CG.addAll(L1);
+                            
+             st = ComputeHull(CG);
             Polygon.add(st);
+             
         }
+       //polygon is the grahm scan result
     return Polygon;
     }
-
-    /**
-     *
-     */
-    public static void ComputeHull( ){
-    
-    }
-    
+ 
     /**
      *
      * @param a
@@ -83,7 +80,30 @@ public class CHAlgo {
         }
         return false;
     }
-    
+
+    /**
+     *
+     * @param a
+     * @param b
+     * @param c
+     */
+    public static MPoint LargestAngle(MPoint a, MPoint b, MPoint c){
+        MPoint largest = new MPoint();
+        double DA = PointDistance(b,c);
+        double DB=PointDistance(a,c);
+        double DC=PointDistance(a,b);
+        
+        double LAR = Math.max(DA,Math.max(DB,DC));
+        if (LAR == DA){
+            largest = a;
+        }else if(LAR == DB){
+            largest = b;
+        }else{
+            largest = c;
+        }
+         
+        return largest; 
+    } 
     /**
      *
      * @param a
@@ -136,10 +156,8 @@ public class CHAlgo {
             }
         }
         MPoint temp = P.get(0);
-        P.remove(0);
-        P.add(0, P.get(c-1)); // put the lowest point at the P0 position
-        P.remove(c);
-        P.add(c,temp);
+        
+Collections.swap(P, 0,c);
         return P;
     }
     
@@ -171,18 +189,7 @@ public class CHAlgo {
         double MA = Math.atan2(Y,X);
         return MA;
     }
-    /**
-     * compare the angle value in the MPoing Object
-     * public static class CompAngle implements Comparator<MPoint>{
-        @Override
-         public int compare(MPoint a, MPoint b){
-             return (int) (a.getA() - b.getA());
-         }       
-    }
-    
-     *  */
-     
-   
+
     
     public static TreeSet<MPoint> sortAngle(ArrayList<MPoint>  L){
         MPoint low =  L.get(0);
@@ -219,11 +226,8 @@ public class CHAlgo {
         SortedSet.addAll(L);
         return SortedSet;
     }
-    
-    public static Stack <MPoint> GS ( ArrayList<MPoint> L){
-        //intialize the stack
-        
-        Stack st =  new Stack();
+     public static  Stack <MPoint> ComputeHull(ArrayList<MPoint> L ){
+     Stack st =  new Stack();
         MPoint sP = L.get(0); //lowest point is the starting point
         st.push(sP);
         st.push(L.get(1));
@@ -246,61 +250,65 @@ public class CHAlgo {
         
         
         return st;
-        
     }
-    public static void main(String[] args) throws FileNotFoundException {
+    
+  
+
+    private static ArrayList<MPoint> split(ArrayList<MPoint> L, double m) {
+        double n = L.size();
+         
+        double r = Math.ceil(n/m);
+       
+        ArrayList PList = new ArrayList();
+         
+        int i =0;
+        while (i<r){
+            
+            if (L.size() <m){
+                PList.add(L);
+            }else{
+                 ArrayList<MPoint> temp = new ArrayList();
+                
+                for (int j =0 ;j<m;j++){
+                   
+                    temp.add(L.get(0));
+                    L.remove(0);
+                }
+                PList.add(temp);
+               System.out.println(L);
+            }
+            
+          
+        i++;
+        }
+          System.out.println("P is \n"+PList);
+        return PList;
+        }
+    
+    
+        public static void main(String[] args) throws FileNotFoundException {
     
      
     
-    MPoint a = new MPoint();
-    a.setX(9);
-    a.setY(7);
-    System.out.println(a + "a x is" + a.getX() +" a y is "+a.getY());
+    MPoint a = new MPoint(1,1);
+    MPoint b = new MPoint(2,1);
+    MPoint c = new MPoint(4,2);
+     
+ 
     
     ArrayList<MPoint> mpoints = loadCSVFile();
-    System.out.println(mpoints);
-    System.out.println("=============================================");
-    ArrayList<MPoint> L =  FindLowest(mpoints);
-    System.out.println(L);
     
-    for (int j =1 ; j<L.size();j++){
-        
-        MPoint P0 = L.get(0);
-     //   P0.setAngle(0);
-        MPoint Pj = L.get(j);        
-      //  Pj.setAngle(MAngle(P0,Pj));
-        
-       
-       
+ 
+  
+//    Stack aa = new Stack();
+//    aa = GS(CG);
+//    System.out.println("stack is"+aa);
+     List d =ChanALGO(mpoints ,  3);
+       System.out.println("=============================================");
+     System.out.println( "d is\n"+d);
+       System.out.println("=============================================");
+     
+     
+     System.out.println(LargestAngle( a,  b,  c));
     }
-    
-    TreeSet<MPoint> L1 = sortAngle(L);
-   
-    ArrayList<MPoint> CG = new ArrayList();
-    CG.addAll(L1);
-    System.out.println("=============================================");
-    Stack aa = new Stack();
-    aa = GS(CG);
-    System.out.println("stack is"+aa);
-     List b =ChanALGO(CG ,  5);
-     System.out.println(b);
-    }
-
-    private static ArrayList<MPoint> split(ArrayList<MPoint> L, int m) {
-        int n = L.size();
-        int p =  n/m;
-        int  r = (int) Math.ceil(p);
-        ArrayList<MPoint> temp = new ArrayList<MPoint>();
-        ArrayList P = new ArrayList<MPoint>();
-        for (int i =0; i< L.size();i+=m){
-            temp.clear();
-            System.out.println("i is "+i+"\n");
-             for (int j = i; j< i+m;j++){
-                 System.out.println("j is "+j+"\n");
-                 temp.add(L.get(j));
-             }
-             P.add(temp);
-        }
-        return P;
-        }
 }
