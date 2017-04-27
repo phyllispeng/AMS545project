@@ -6,34 +6,36 @@
 package cgproject;
 
 //import java.awt.event.MouseEvent;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+
+ 
+ 
+import java.io.FileNotFoundException;
+import java.util.*;
 import javafx.scene.input.MouseEvent;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+ 
 /**
  *
  * @author Phyllis Peng
  */
 public class CGproject extends Application {
-    
+
+ 
+    private CHAlgo chalgo;
         
 //        public RadioButton AnimeOn;  
 //        public RadioButton AnimeOff;  
@@ -47,52 +49,66 @@ public class CGproject extends Application {
             HBox OptionBox = new HBox();
             Button clearBtn = new Button(); 
             Button computeBtn = new Button(); 
+            Button loadFile = new Button();
             BorderPane mainPane = new BorderPane();
-            ImageView iv = new ImageView();
-            StackPane SP = new StackPane();
-            Group g = new Group();
-            Label l = new Label();
-           
-            OptionBox.setStyle("-fx-background-color: green ");
+          
+            Pane c = new Pane( );
+            c.resize(800, 600);
+            c.setStyle("-fx-background-color #BDC0BA");
+            OptionBox.setStyle("-fx-background-color:#A8D8B9 ");
             OptionBox.setAlignment(Pos.BOTTOM_CENTER);
             OptionBox.setPadding(marginlessInsets);
             OptionBox.setSpacing(50.0);
-            btn.setText("Say 'Hello World'");
+            
             clearBtn.setText("Clear");
             computeBtn.setText("Compute");
-           
-            SP.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            loadFile.setText("Import");
+            
+            c.setOnMouseClicked(new EventHandler<MouseEvent>(){
                 @Override
                 public void handle(MouseEvent e){
                     MPoint me = respondToClick(e);
                     Circle circle = new Circle( 5.0);
-                   System.out.println(me);
-                
-                   
-                    
+                    System.out.println(me);
                     circle.setFill(Color.BLACK);
-                    circle.setCenterX(me.getX()-300);
-                    circle.setCenterY(me.getY()-400);
-                    
-                     g.getChildren().add(circle);
-                    g.relocate(me.getX()-350, me.getY()-450);
-                    SP.getChildren().add(g);
+                    //circle.relocate(me.getX(),me.getY());
+                    circle.setCenterX(me.getX());
+                            circle.setCenterY(me.getY());
+                   
+                    c.getChildren().add(circle);
                     
                 }
                 
             });
             
-            btn.setOnAction(new EventHandler<ActionEvent>() {
-
+            loadFile.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
-                    System.out.println("Hello World!");
+                public void handle(ActionEvent event) {  
+                        ArrayList<MPoint> mp = new ArrayList();
+                    try {
+                        mp = chalgo.loadCSVFile();
+                        for ( int i = 0; i < mp.size(); i++){
+                            MPoint dot = mp.get(i);
+                            Circle circle = new Circle( 5.0);
+                            circle.setFill(Color.BLACK);
+                            double x = (dot.getX()*25)+400;
+                            double y = (dot.getY()*25)+400;
+                            System.out.println("x is "+ x + "y is "+y);
+                            circle.setCenterX(x);
+                            circle.setCenterY(y);
+                           // circle.relocate(x,y);
+                            c.getChildren().add(circle);
+                        }
+                    } catch (FileNotFoundException ex) {
+                      System.out.print(ex);
+                    }  
                 }
             });
             
             clearBtn.setOnAction(new EventHandler<ActionEvent>(){
                 @Override
                 public void handle(ActionEvent event){
+                    c.getChildren().clear();
                     System.out.println("Clear");
                 }
             });
@@ -106,13 +122,12 @@ public class CGproject extends Application {
         //root.getChildren().add(btn);
         root.getChildren().add(mainPane);
         mainPane.setBottom(OptionBox);
-        mainPane.setCenter(SP);
+        mainPane.setCenter(c);
       //  SP.getChildren().add(btn);
  
         
-        Scene scene = new Scene(root, 800, 600);
-        OptionBox.getChildren().addAll(clearBtn,computeBtn);
-        primaryStage.setTitle("Hello World!");
+        Scene scene = new Scene(root, 800, 800);
+        OptionBox.getChildren().addAll(clearBtn,computeBtn,loadFile);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -126,19 +141,9 @@ public class CGproject extends Application {
         
         return mp;
     }
-
-    public void paintCOmponet(Graphics g, MPoint mp){
-        g.setColor(java.awt.Color.black);
-        int x = (int)mp.getX();
-        int y = (int)mp.getY();
-        g.fillOval(x, y, 10, 10);
-        
-    }
-    /**
-     * @param args the command line arguments
-     */
-    /*public static void main(String[] args) {
-        launch(args);
-    }*/
-    
+  
+  
+  
+ 
 }
+ 
