@@ -20,7 +20,7 @@ import java.util.*;
 public class CHAlgo {
 
     
-public CGproject cg;
+private CGproject cg;
     /**
      *
      * @param L
@@ -34,7 +34,7 @@ public CGproject cg;
         
         ArrayList<ArrayList<MPoint>> PList = split(L, m);
 
-        ArrayList Polygon = new ArrayList();
+        ArrayList<ArrayList<MPoint>> Polygon = new ArrayList();
         //compute convex Hall
         for (int j = 0; j < PList.size(); j++) {
             int cellSize = PList.get(j).size();
@@ -56,50 +56,61 @@ public CGproject cg;
                     break;
             }
         }
+        //draw polygons here
         
         //polygon is the graham scan result
        // initial p0 and p1 
        //p is the convex hull out put
+       
        System.out.println("CHull arraylist \n" + Polygon);
+       
        ArrayList<MPoint> P = new ArrayList();
   
        
-       
+        ArrayList<MPoint> ATemp = new ArrayList();
         MPoint p1 = FindLowest(Lcopy).get(0);
         MPoint p0 = new MPoint(p1.getX()-10,0);
         MPoint pn1 = new MPoint();
+        MPoint pn = new MPoint();
         P.add(0,p0);
         P.add(1,p1);
 
         for (int k = 1; k< m;k++){
-            System.out.println("K is "+k+"\n==================================================");
+//            System.out.println("K is "+k+"\n==================================================");
             for (int i =0; i<PList.size();i++){
                  
                 // test the largest angle in the sub convex hull
-                 pn1= MAXAngle(P.get(k),P.get(k-1),PList.get(i));
-                 
+                 pn1= MAXAngle(P.get(k),P.get(k-1),   Polygon.get(i));
+                 ATemp.add(pn1);
+//                 System.out.println("\n i is "+i +"the returned angle is "+pn1);
             }
-             
-           
-           P.add(pn1);
-            
-            if (pn1 == P.get(1)){
+             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"+ATemp+"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+           for (int ii =0; ii<ATemp.size();ii++){
+               pn = MAXAngle(P.get(k),P.get(k-1),ATemp );
+           }
+           P.add(pn);
+            System.out.println("P is the angle list \n"+P);
+            if(pn == P.get(1)){
                 return P;
             }
+           
         }
+        P.clear();
         return P;
     }
     public static int largestIndex(ArrayList<Double> A){
         int index =0;
         double max = A.get(0);
         for (int i =0; i<A.size();i++){
+            if(!Double.isNaN(A.get(i))){
             if(max < A.get(i)){
                 max =A.get(i);
               index = i;
               
             }
+            }
         }
-        System.out.println("\n~~index here is" + index);
+//        System.out.println("\n~~index here is" + index);
         return index;
     }
     /**
@@ -139,24 +150,30 @@ public CGproject cg;
      */
     public static MPoint MAXAngle(MPoint p1, MPoint p2, ArrayList<MPoint> Q) {
         ArrayList<Double> Angles = new ArrayList();
-       
+//       System.out.println("the Q in the funcntion is "+Q);
         for (int i =0; i<Q.size();i++){
-            //test with every single point in the point list of q
+            if (p1 == Q.get(i)){
+                Angles.add(0.0);
+            }else{
+               //test with every single point in the point list of q
         double dis12 =  PointDistance(p1,p2);
         double dis13 = PointDistance(p1,Q.get(i));
         double dis23 =  PointDistance(p2,Q.get(i));
         double result = (dis12*dis12 +dis13*dis13 - dis23*dis23)/(2*dis12*dis13);
         double angle = Math.acos(result);
         Angles.add(Math.toDegrees(angle));
+            
+            }
+         
         
         }
-        System.out.print(Angles);
+//        System.out.println("!!"+Angles);
         
-//        System.out.println("angles are \n"+ Angles);
+        System.out.println("angles are \n"+ Angles);
         int index = largestIndex(Angles);
         
-         System.out.println("the index is  " + index);
-         System.out.println("Q is"+Q);
+        System.out.println("the index is  " + index);
+//         System.out.println("Q is"+Q);
         return Q.get(index);
     }
 
@@ -341,7 +358,11 @@ public CGproject cg;
     public static void main(String[] args) throws FileNotFoundException {
 
        ArrayList<MPoint> aaa = loadCSVFile();
-       System.out.println(ChanALGO(aaa, 3));
-  
+       System.out.println(ChanALGO(aaa, 5));
+//       ArrayList<Double> a = new ArrayList();
+//       a.add(1.2/0);
+//       a.add(1.0);
+//       System.out.println(a);
+//       System.out.println(largestIndex(a));
     }
 }

@@ -27,6 +27,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.animation.*;
+import javafx.scene.control.Label;
+
 /**
  *
  * @author Phyllis Peng
@@ -70,8 +72,9 @@ public class CGproject extends Application {
             public void handle(MouseEvent e) {
                 MPoint me = respondToClick(e);
                 mp.add(me);
-              
+
                 drawCircle(me);
+                System.out.println("mp list is" + mp);
             }
 
         });
@@ -81,13 +84,18 @@ public class CGproject extends Application {
             public void handle(ActionEvent event) {
 
                 try {
-                    mp = chalgo.loadCSVFile();
-                    for (int i = 0; i < mp.size(); i++) {
-                        MPoint dot = mp.get(i);
+                    ArrayList<MPoint> temp = new ArrayList();
+                    temp = chalgo.loadCSVFile();
+                    for (int i = 0; i < temp.size(); i++) {
+                        MPoint dot = temp.get(i);
                         Circle circle = new Circle(5.0);
                         circle.setFill(Color.BLACK);
-                        double x = (dot.getX() * 25) + 400;
-                        double y = (dot.getY() * 25) + 400;
+                        double x = (dot.getX() * 25) + 300;
+                        double y = (dot.getY() * 25) + 300;
+
+                        MPoint ScalePoint = new MPoint(x, y);
+                        mp.add(ScalePoint);
+
                         System.out.println("x is " + x + "y is " + y);
                         circle.setCenterX(x);
                         circle.setCenterY(y);
@@ -97,6 +105,8 @@ public class CGproject extends Application {
                 } catch (FileNotFoundException ex) {
                     System.out.print(ex);
                 }
+
+                System.out.println("mp list is" + mp);
             }
         });
 
@@ -105,7 +115,7 @@ public class CGproject extends Application {
             public void handle(ActionEvent event) {
                 c.getChildren().clear();
                 mp.clear();
-                m=0;
+                m = 0;
                 System.out.println("Clear");
             }
         });
@@ -120,21 +130,33 @@ public class CGproject extends Application {
                     tf.setStyle("-fx-background-color : #B5495B");
                     // tf.setStyle("-fx-text-fill :white");
                 }
-                 ArrayList<MPoint> ch = new ArrayList();
+                ArrayList<MPoint> ch = new ArrayList();
                 System.out.println(" m is " + m);
-               
+
                 // the convex hull arraylist
-                if (m!=0){
-               ch= chalgo.ChanALGO( mp ,  m);
-                System.out.println("chis \n"+ch);
+                if (m != 0) {
+                    ch = chalgo.ChanALGO(mp, m);
+                    System.out.println("chis \n" + ch);
                 }
-                
+
                 // L.add(mp.get(0));
-               
-                for(int k=0; k<ch.size();k++){
+                if (ch.isEmpty()) {
+                    c.getChildren().clear();
+                    mp.clear();
+                    m = 0;
+                    Label fail = new Label();
+                    fail.setText("Fail m was too small, click clear to try again");
+                    fail.setLayoutX(280);
+                    fail.setLayoutY(200);
+                    fail.setScaleX(2);
+                    fail.setScaleY(2);
+                  //  fail.setAlignment(Pos.TOP_CENTER);
+                    c.getChildren().add(fail);
+                } else {
                     drawLines(ch);
-                    
+
                 }
+
             }
         });
         StackPane root = new StackPane();
@@ -158,32 +180,31 @@ public class CGproject extends Application {
 
         return mp;
     }
-    public static void drawCircle(MPoint P){
-          Circle circle = new Circle(5.0);
-                
-                circle.setFill(Color.BLACK);
-                //circle.relocate(me.getX(),me.getY());
-                circle.setCenterX(P.getX());
-                circle.setCenterY(P.getY());
 
-                c.getChildren().add(circle);
+    public static void drawCircle(MPoint P) {
+        Circle circle = new Circle(5.0);
+
+        circle.setFill(Color.BLACK);
+        //circle.relocate(me.getX(),me.getY());
+        circle.setCenterX(P.getX());
+        circle.setCenterY(P.getY());
+
+        c.getChildren().add(circle);
     }
-    public static void drawLines(ArrayList<MPoint>  L) {
-        ArrayList<MPoint> newL = new ArrayList(); 
-        newL= L;
-        newL.add(L.get(0));
-        
-        for (int i = 0; i < newL.size() - 1; i++) {
+
+    public static void drawLines(ArrayList<MPoint> L) {
+
+        for (int i = 1; i < L.size() - 1; i++) {
             Line lineA = new Line();
-            MPoint start = newL.get(i);
-            MPoint end = newL.get(i+1);
+            MPoint start = L.get(i);
+            MPoint end = L.get(i + 1);
             lineA.setStartX(start.getX());
             lineA.setStartY(start.getY());
             lineA.setEndX(end.getX());
             lineA.setEndY(end.getY());
-       
+
             lineA.setStrokeWidth(3);
-            
+
             c.getChildren().add(lineA);
         }
     }
