@@ -40,6 +40,7 @@ public class CGproject extends Application {
 //        public RadioButton AnimeOn;  
 //        public RadioButton AnimeOff;  
     public ArrayList<MPoint> mp;
+    public Stage s;
     public int m;
     public static Pane c;
 
@@ -52,6 +53,7 @@ public class CGproject extends Application {
         Button clearBtn = new Button();
         Button computeBtn = new Button();
         Button loadFile = new Button();
+        Button ComputeGS = new Button();
         BorderPane mainPane = new BorderPane();
         TextField tf = new TextField();
         c = new Pane();
@@ -64,6 +66,7 @@ public class CGproject extends Application {
 
         clearBtn.setText("Clear");
         computeBtn.setText("Compute");
+        ComputeGS.setText("Compute and Draw GS");
         loadFile.setText("Import");
         tf.setText("m");
 
@@ -90,8 +93,8 @@ public class CGproject extends Application {
                         MPoint dot = temp.get(i);
                         Circle circle = new Circle(5.0);
                         circle.setFill(Color.BLACK);
-                        double x = (dot.getX() * 25) + 300;
-                        double y = (dot.getY() * 25) + 300;
+                        double x = (dot.getX() * 30) + 300;
+                        double y = 500-(dot.getY() * 30) ;
 
                         MPoint ScalePoint = new MPoint(x, y);
                         mp.add(ScalePoint);
@@ -115,9 +118,20 @@ public class CGproject extends Application {
             public void handle(ActionEvent event) {
                 c.getChildren().clear();
                 mp.clear();
+                tf.setText("m");
                 m = 0;
                 System.out.println("Clear");
             }
+        });
+        
+        ComputeGS.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.print("gs"); 
+                m = Integer.parseInt(tf.getText());
+                CHAlgo.computeAndDrawGS(mp, m);
+                System.out.println("Compute GS");
+        }
         });
         computeBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -153,7 +167,7 @@ public class CGproject extends Application {
                   //  fail.setAlignment(Pos.TOP_CENTER);
                     c.getChildren().add(fail);
                 } else {
-                    drawLines(ch);
+                 //   drawLines(ch);
 
                 }
 
@@ -166,7 +180,7 @@ public class CGproject extends Application {
         mainPane.setCenter(c);
 
         Scene scene = new Scene(root, 800, 800);
-        OptionBox.getChildren().addAll(tf, computeBtn, loadFile, clearBtn);
+        OptionBox.getChildren().addAll(tf, computeBtn, ComputeGS,loadFile, clearBtn);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -202,9 +216,10 @@ public class CGproject extends Application {
             lineA.setStartY(start.getY());
             lineA.setEndX(end.getX());
             lineA.setEndY(end.getY());
-
+            
             lineA.setStrokeWidth(3);
-
+            lineA.setStroke(Color.DARKCYAN);
+            lineA.setFill(Color.DARKCYAN);
             c.getChildren().add(lineA);
         }
     }
