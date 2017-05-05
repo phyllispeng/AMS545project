@@ -8,17 +8,12 @@ Project
 Language
 	Java
 
-Project Plan
-	1) Implement the Chan’s algorithms with the pseudocode in the slide.
-		a. Separate the points into n/m groups, find the convex hull for each group.
-		b. Then find the convex hull of all the convex hull we just found
-	2) Test the program with keyboard/file input
-		a. First test with 𝑚 = 3,4,5,6,… , see if the program can find convex hull of a group of points.
-		b. Test if the program works on finding the convex hull of the m-gons (triangles for 𝑚 = 3)
-	3) Implement the UI
-		a. Test (2) a with the UI first
-		b. Then test (2) b with the implemented UI
-	4) Implement the animation
-		a. Test (2) a with animation
-		b. Then test (2) b with the implemented animation
-	5) Write the project report
+To Run this Project with UI:
+	Hit the run button in IDE
+	If the user want to import from a different CSV file , the user need copy the file into the src folder, then change the file name string to the new file.
+	
+To run this project without UI:
+	In the CHAlgo.java file, uncomment the main method.
+	Then build the project and then run the CHAlgo.java file by right click on the file and hit run file.
+	If you want to change to a different CSV file, copy the new file into the src folder, then change the input filename string to the new file.
+	Also you can test all the method in the CHAlgo.java Class by calling the method in the main method and run this single file.

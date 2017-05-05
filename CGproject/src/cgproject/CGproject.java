@@ -40,6 +40,7 @@ public class CGproject extends Application {
 //        public RadioButton AnimeOn;  
 //        public RadioButton AnimeOff;  
     public ArrayList<MPoint> mp;
+
     public Stage s;
     public int m;
     public static Pane c;
@@ -47,6 +48,7 @@ public class CGproject extends Application {
     @Override
     public void start(Stage primaryStage) {
         mp = new ArrayList<MPoint>();
+        
         Insets marginlessInsets = new Insets(5, 5, 5, 5);
         Button btn = new Button();
         HBox OptionBox = new HBox();
@@ -54,7 +56,9 @@ public class CGproject extends Application {
         Button computeBtn = new Button();
         Button loadFile = new Button();
         Button ComputeGS = new Button();
+        Button Import2 = new Button();
         BorderPane mainPane = new BorderPane();
+
         TextField tf = new TextField();
         c = new Pane();
         c.resize(800, 600);
@@ -67,7 +71,8 @@ public class CGproject extends Application {
         clearBtn.setText("Clear");
         computeBtn.setText("Compute");
         ComputeGS.setText("Compute and Draw GS");
-        loadFile.setText("Import");
+        loadFile.setText("Import Set 1");
+        Import2.setText("Import Set 2");
         tf.setText("m");
 
         c.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -81,20 +86,20 @@ public class CGproject extends Application {
             }
 
         });
-
+        
         loadFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
                 try {
                     ArrayList<MPoint> temp = new ArrayList();
-                    temp = chalgo.loadCSVFile();
+                    temp = chalgo.loadCSVFile("points.csv");
                     for (int i = 0; i < temp.size(); i++) {
                         MPoint dot = temp.get(i);
                         Circle circle = new Circle(5.0);
                         circle.setFill(Color.BLACK);
                         double x = (dot.getX() * 30) + 300;
-                        double y = 500-(dot.getY() * 30) ;
+                        double y = 500 - (dot.getY() * 30);
 
                         MPoint ScalePoint = new MPoint(x, y);
                         mp.add(ScalePoint);
@@ -123,15 +128,15 @@ public class CGproject extends Application {
                 System.out.println("Clear");
             }
         });
-        
+
         ComputeGS.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.print("gs"); 
+                System.out.print("gs");
                 m = Integer.parseInt(tf.getText());
                 CHAlgo.computeAndDrawGS(mp, m);
                 System.out.println("Compute GS");
-        }
+            }
         });
         computeBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -149,9 +154,15 @@ public class CGproject extends Application {
 
                 // the convex hull arraylist
                 if (m != 0) {
+
                     ch = chalgo.ChanALGO(mp, m);
+                    // ch = chalgo.ChanAlgoComplete(mp);
                     System.out.println("chis \n" + ch);
                 }
+//                else{
+//                   // System.out.println("\n !!in the else \n");
+//                   //  ch = CHAlgo.ChanAlgoComplete(mp);
+//                }
 
                 // L.add(mp.get(0));
                 if (ch.isEmpty()) {
@@ -164,10 +175,14 @@ public class CGproject extends Application {
                     fail.setLayoutY(200);
                     fail.setScaleX(2);
                     fail.setScaleY(2);
-                  //  fail.setAlignment(Pos.TOP_CENTER);
+                    //  fail.setAlignment(Pos.TOP_CENTER);
                     c.getChildren().add(fail);
                 } else {
-                 //   drawLines(ch);
+                    System.out.println(ch);
+                    
+                       // drawLines(ch);
+                  
+                 
 
                 }
 
@@ -179,8 +194,9 @@ public class CGproject extends Application {
         mainPane.setBottom(OptionBox);
         mainPane.setCenter(c);
 
-        Scene scene = new Scene(root, 800, 800);
-        OptionBox.getChildren().addAll(tf, computeBtn, ComputeGS,loadFile, clearBtn);
+        Scene scene = new Scene(root, 1000, 800);
+       // OptionBox.getChildren().addAll(tf, computeBtn, ComputeGS, loadFile, Import2, clearBtn);
+         OptionBox.getChildren().addAll(tf, computeBtn, ComputeGS,loadFile , clearBtn);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -216,7 +232,7 @@ public class CGproject extends Application {
             lineA.setStartY(start.getY());
             lineA.setEndX(end.getX());
             lineA.setEndY(end.getY());
-            
+
             lineA.setStrokeWidth(3);
             lineA.setStroke(Color.DARKCYAN);
             lineA.setFill(Color.DARKCYAN);

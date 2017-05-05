@@ -43,8 +43,8 @@ public class CHAlgo {
      * @param m
      * @return
      */
-    public static void computeAndDrawGS(ArrayList<MPoint> L, int m){
-          ArrayList<ArrayList<MPoint>> PList = split(L, m);
+    public static void computeAndDrawGS(ArrayList<MPoint> L, int m) {
+        ArrayList<ArrayList<MPoint>> PList = split(L, m);
 
         ArrayList<ArrayList<MPoint>> Polygon = new ArrayList();
         //compute convex Hall
@@ -87,6 +87,21 @@ public class CHAlgo {
 
         }
     }
+
+    public static ArrayList<MPoint> ChanAlgoComplete(ArrayList<MPoint> L) {
+        ArrayList<MPoint> CH = new ArrayList();
+        for (int t = 1; t < L.size(); t++) {
+            System.out.print(t);
+            int a = (int) Math.pow(2, Math.pow(2, t));
+            int m = Math.min(a, L.size());
+            CH = ChanALGO(L, m);
+            if (CH.isEmpty()) {
+                continue;
+            }
+        }
+        return CH;
+    }
+
     public static ArrayList<MPoint> ChanALGO(ArrayList<MPoint> L, int m) {
 
         ArrayList<MPoint> Lcopy = new ArrayList();
@@ -164,6 +179,7 @@ public class CHAlgo {
             //System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + ATemp + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             //draw lines between angles in this loop
             pn = MAXAngle(P.get(k), P.get(k - 1), ATemp);
+            //draw lines between angles in this loop
             for (int a = 0; a < ATemp.size(); a++) {
 
                 Line EDGE = drawSingleLine(P.get(k), ATemp.get(a));
@@ -180,24 +196,17 @@ public class CHAlgo {
 
                 // 6 minutes data per frame
                 if (pn != ATemp.get(a)) {
-//                    FadeTransition ft1 = new FadeTransition(Duration.seconds(5), EDGE);
-//                    ft1.setFromValue(1.0);
-//                    ft1.setToValue(0.0);
-//                    ft1.setCycleCount(k);
-//                    ft1.play();
+
                     final Timeline timeline = new Timeline();
                     timeline.setCycleCount(a);
 
                     final KeyFrame kf = new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-
-                           
-                           
-                           EDGE.setVisible(true);
+                            EDGE.setVisible(true);
                             timeline.play();
-                             EDGE.setVisible(false);
-                             timeline.pause();
+                            EDGE.setVisible(false);
+                            timeline.pause();
                             timeline.play();
                         }
                     });
@@ -362,12 +371,12 @@ public class CHAlgo {
         return P;
     }
 
-    public static ArrayList<MPoint> loadCSVFile() throws FileNotFoundException {
+    public static ArrayList<MPoint> loadCSVFile(String fn) throws FileNotFoundException {
         ArrayList<MPoint> MP = new ArrayList();
 
         String csvFilePath = "src/cgproject/";
 
-        String fileName = csvFilePath + "points.csv";
+        String fileName = csvFilePath + fn;
         Scanner fromFile = new Scanner(new BufferedReader(new FileReader(fileName)));
         while (fromFile.hasNextLine()) {
             String Input = fromFile.nextLine();
@@ -478,7 +487,7 @@ public class CHAlgo {
                     L.remove(0);
                 }
                 PList.add(temp);
-                System.out.println(L);
+                //      System.out.println(L);
             }
 
             i++;
@@ -512,11 +521,12 @@ public class CHAlgo {
         tempL.setFill(Color.GOLD);
         return tempL;
     }
+//
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        ArrayList<MPoint> aaa = loadCSVFile();
-        System.out.println(ChanALGO(aaa, 5));
+        ArrayList<MPoint> aaa = loadCSVFile("points.csv");
+        System.out.println(ChanALGO(aaa, 4));
 //       ArrayList<Double> a = new ArrayList();
 //       a.add(1.2/0);
 //       a.add(1.0);
